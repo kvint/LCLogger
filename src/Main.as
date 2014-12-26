@@ -13,6 +13,7 @@ package {
     public class Main extends Sprite {
 
         private var _connection:LocalConnection;
+        private var _client:LCClient;
 
         private static const CONNECTION_NAME:String = "lclogger";
         private var _textField:TextField;
@@ -22,14 +23,30 @@ package {
             setupConnection();
             setupUI();
 
-            test();
+            addListeners();
+            //test();
+        }
+
+        private function addListeners():void {
+            _client.addEventListener(ClientEvent.DATA_ADDED, onDataAdded);
+        }
+
+        private function onDataAdded(event:ClientEvent):void {
+            var needToScroll:Boolean = _textField.scrollV == _textField.maxScrollV;
+            _textField.appendText(event.data + "\n");
+            if(needToScroll){
+                scrollToEnd();
+            }
         }
 
         private function test():void {
             setInterval(function():void{
-                _textField.appendText("test lorem ipsum " + Math.random());
-                _textField.scrollV = _textField.maxScrollV;
+                _client.dispatchEvent(new ClientEvent(ClientEvent.DATA_ADDED, "test"));
             }, 100);
+        }
+
+        private function scrollToEnd():void {
+            _textField.scrollV = _textField.maxScrollV;
         }
 
         private function setupUI():void {
@@ -56,9 +73,12 @@ package {
         }
 
         private function setupConnection():void {
+
+            _client = new LCClient();
+
             _connection = new LocalConnection();
             _connection.addEventListener(StatusEvent.STATUS, onConnectionStatus);
-            _connection.client = new LCClient();
+            _connection.client = _client;
 
             _connection.connect(CONNECTION_NAME);
         }
