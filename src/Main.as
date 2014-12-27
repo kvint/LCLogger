@@ -9,7 +9,7 @@ package {
     import flash.text.TextFormat;
     import flash.utils.setInterval;
 
-    [SWF(width="600", height="700", frameRate=60)]
+    [SWF(width="600", height="700", frameRate=60, backgroundColor="0x000000")]
     public class Main extends Sprite {
 
         private var _connection:LocalConnection;
@@ -60,6 +60,7 @@ package {
             fmt.font = "Menlo";
 
             _textField = new TextField();
+            _textField.textColor = 0xffffff;
             _textField.defaultTextFormat = fmt;
             _textField.wordWrap = true;
             addChild(_textField);
